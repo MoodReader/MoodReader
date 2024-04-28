@@ -11,9 +11,9 @@ from nltk.tokenize import TweetTokenizer
 def remove_stop_words(text):
     # make the whole sentence into small peices
     tokenizer = TweetTokenizer()
-    # stop words for lang -> english
-    stop_words = stopwords.words('english')
     sentence = tokenizer.tokenize(text)
+    # stop words for lang -> english
+    stop_words = set(stopwords.words('english'))
     sentence_without_stopwords = []
     for word in sentence:
         if word not in stop_words:
