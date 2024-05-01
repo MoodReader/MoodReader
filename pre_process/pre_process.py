@@ -9,8 +9,6 @@ from nltk.corpus import stopwords
 import string
 from text_normalization import*
 from remove_slangs import*
-
-import pandas as pd
 from convert_to_lowercase import convert_to_lowercase
 from remove_stop_words import remove_stop_words
 from remove_punctuation import remove_punctuation
@@ -21,20 +19,24 @@ data = pd.read_csv('../sentimentdataset.csv')
 
 data = remove_extra_spaces(data)
 
-
 data = convert_to_lowercase(data, 'Text')
-print(data['Text'].head())
 
 data['Text'] = data['Text'].apply(remove_punctuation)
-print(data['Text'].head())
-
 
 data['Text'] = data['Text'].apply(remove_stop_words)
-print(data['Text'].head())
-
 
 data['Text'] = data['Text'].apply(remove_slangs)
+
+data["Sentiment (Label)"] = data["Sentiment (Label)"].apply(remove_slangs)
+
+data["Sentiment (Label)"] = data["Sentiment (Label)"].apply(Converting_To_Primitive)
+
 print(data['Text'].head())
+
+
+
+
+
 
 # for row in data.index:
 #    data.loc[row,"Text"] = data.loc[row,"Text"].lower()
@@ -52,7 +54,3 @@ print(data['Text'].head())
 #     data["Text"] = data["Text"].str.replace(' '+i+' ', " ") 
 
 
-
-data["Sentiment (Label)"] = data["Sentiment (Label)"].apply(remove_slangs)
-
-data["Sentiment (Label)"] = data["Sentiment (Label)"].apply(Converting_To_Primitive)
