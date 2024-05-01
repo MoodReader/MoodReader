@@ -3,7 +3,11 @@ from convert_to_lowercase import convert_to_lowercase
 from remove_stop_words import remove_stop_words
 from remove_punctuation import remove_punctuation
 from remove_slangs import remove_slangs
+from remove_extra_spaces import remove_extra_spaces
 data = pd.read_csv('../sentimentdataset.csv')
+
+data = remove_extra_spaces(data)
+
 
 data = convert_to_lowercase(data, 'Text')
 print(data['Text'].head())
