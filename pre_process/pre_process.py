@@ -27,8 +27,6 @@ stop_words= stopwords.words('english')+ ["❤️" , "🐾", "🐶","💪","🎉"
 for i in stop_words:
     data["Text"] = data["Text"].str.replace(' '+i+' ', " ") 
 
-for i in stop_words:
-    data["Text"] = data["Text"].str.replace(i+' ', " ") 
 # remove extra spaces
 for row in data.index:
    data.loc[row,"Text"] = " ".join(data.loc[row,"Text"].split())
