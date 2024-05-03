@@ -531,4 +531,10 @@ y_pred2 = svmModel.predict(X_test_featureExtraction_TFIDF)
 
 print('The accuracy for Support Vector Machines (SVM):',accuracy_score(y_test,y_pred2)*100)
 
+from sklearn.naive_bayes import MultinomialNB
 
+# Naive Bayes using Bag of Words features
+naive_bayes_model_bow = MultinomialNB()
+naive_bayes_model_bow.fit(X_train_featureExtraction_BagOfword, y_train)
+y_pred_nb_bow = naive_bayes_model_bow.predict(X_test_featureExtraction_BagOfword)
+print('The accuracy for Naive Bayes (Bag of Words):', accuracy_score(y_test, y_pred_nb_bow) * 100)
