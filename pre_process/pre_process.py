@@ -31,10 +31,10 @@ featureExtraction_BagOfword = CountVectorizer(min_df=1, stop_words="english", lo
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)
+X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)# is for SVM and Logistic Regression
 X_test_featureExtraction_TFIDF = featureExtraction_TFIDF.transform(X_test)
 
-X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)
+X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)# is for Naive Bayes
 X_test_featureExtraction_BagOfword = featureExtraction_BagOfword.transform(X_test)
 
 logisticRegModel = LogisticRegression(solver='liblinear', C=10.0, random_state=0).fit(X_train_featureExtraction_TFIDF, y_train)
@@ -74,7 +74,7 @@ ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred_nb_bow)).plot()
 plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
 
 
-# # the faild LSTM
+# # the faild LSTM or RNN
 # from sklearn.preprocessing import MaxAbsScaler  
 # scaler = MinMaxScaler()
 # scaler.fit(X_train_featureExtraction_TFIDF)
