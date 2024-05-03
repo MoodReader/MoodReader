@@ -1,6 +1,8 @@
+import gensim
 import numpy as np
 import pandas as pd
 import nltk
+from gensim.models.doc2vec import TaggedDocument, Doc2Vec
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
@@ -19,7 +21,19 @@ from remove_slangs import remove_slangs
 from remove_extra_spaces import remove_extra_spaces
 from lemmatization_text import lemmatization_text
 from text_normalization import Converting_To_Primitive
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
+import numpy as np
+import pandas as pd
+import nltk
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import gensim
+import nltk
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 emotional_states = [
     'victimized',
@@ -504,37 +518,38 @@ data['Sentiment (Label)'] = data['Sentiment (Label)'].apply(Converting_To_Primit
 
 data['Text'] = data['Text'].apply(lemmatization_text)
 
+
+
+# Lemmatization
+lemmatizer = nltk.WordNetLemmatizer()
+data['Text'] = data['Text'].apply(lambda x: [lemmatizer.lemmatize(word) for word in x])
+
+# Tag documents with unique IDs
+tagged_data = [TaggedDocument(words=text, tags=[str(i)]) for i, text in enumerate(data['Text'])]
+
+# Train Doc2Vec model
+model = Doc2Vec(tagged_data, vector_size=100, window=5, min_count=1, epochs=10)
+
+# Function to infer document vectors
+def infer_vector(text):
+    return model.infer_vector(text)
+
 X = data['Text']
-
 y = data['Sentiment (Label)']
-
-featureExtraction_TFIDF = TfidfVectorizer(min_df= 1, stop_words= emotional_states, lowercase=True)#TF-IDF is for SVM
-
-featureExtraction_BagOfword = CountVectorizer(min_df=1, stop_words=emotional_states, lowercase=True)#Bag of word is for Logistic Regression
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)
-X_test_featureExtraction_TFIDF = featureExtraction_TFIDF.transform(X_test)
+# Infer document vectors
+X_train_doc2vec = np.array([infer_vector(text) for text in X_train])
+X_test_doc2vec = np.array([infer_vector(text) for text in X_test])
 
-X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)
-X_test_featureExtraction_BagOfword = featureExtraction_BagOfword.transform(X_test)
+# Train classifiers
+logisticRegModel = LogisticRegression(solver='liblinear', C=10.0, random_state=0).fit(X_train_doc2vec, y_train)
+y_pred1 = logisticRegModel.predict(X_test_doc2vec)
+print('The accuracy for Logistic Regression Classifier:', accuracy_score(y_test, y_pred1) * 100)
+
+svmModel = SVC(kernel='linear').fit(X_train_doc2vec, y_train)
+y_pred2 = svmModel.predict(X_test_doc2vec)
+print('The accuracy for Support Vector Machines (SVM):', accuracy_score(y_test, y_pred2) * 100)
 
 
-logisticRegModel = LogisticRegression().fit(X_train_featureExtraction_BagOfword, y_train)
-y_pred1 = logisticRegModel.predict(X_test_featureExtraction_BagOfword)
-print('The accuracy for Logistic Regression Classifer:',accuracy_score(y_test,y_pred1)*100)
-
-svmModel = svm.SVC(kernel='linear').fit(X_train_featureExtraction_TFIDF, y_train)
-y_pred2 = svmModel.predict(X_test_featureExtraction_TFIDF)
-
-
-print('The accuracy for Support Vector Machines (SVM):',accuracy_score(y_test,y_pred2)*100)
-
-from sklearn.naive_bayes import MultinomialNB
-
-# Naive Bayes using Bag of Words features
-naive_bayes_model_bow = MultinomialNB()
-naive_bayes_model_bow.fit(X_train_featureExtraction_BagOfword, y_train)
-y_pred_nb_bow = naive_bayes_model_bow.predict(X_test_featureExtraction_BagOfword)
-print('The accuracy for Naive Bayes (Bag of Words):', accuracy_score(y_test, y_pred_nb_bow) * 100)
