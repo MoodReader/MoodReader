@@ -1,8 +1,10 @@
+import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.naive_bayes import MultinomialNB
 import matplotlib.pyplot as plt
@@ -31,58 +33,66 @@ featureExtraction_BagOfword = CountVectorizer(min_df=1, stop_words="english", lo
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)# is for SVM and Logistic Regression
+X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)  # is for SVM and Logistic Regression
 X_test_featureExtraction_TFIDF = featureExtraction_TFIDF.transform(X_test)
 
-X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)# is for Naive Bayes
+X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)  # is for Naive Bayes
 X_test_featureExtraction_BagOfword = featureExtraction_BagOfword.transform(X_test)
 
-logisticRegModel = LogisticRegression(solver='liblinear', C=10.0, random_state=0).fit(X_train_featureExtraction_TFIDF, y_train)
+logisticRegModel = LogisticRegression(solver='liblinear', C=10.0, random_state=0).fit(X_train_featureExtraction_TFIDF,
+                                                                                      y_train)
 y_pred1 = logisticRegModel.predict(X_test_featureExtraction_TFIDF)
 
 print('The accuracy for Logistic Regression Classifier:', accuracy_score(y_test, y_pred1) * 100)
 
-conf_m = confusion_matrix(y_test, y_pred1)
-report = classification_report(y_test, y_pred1)
-print('report: ', report, sep='\n')
-print('-----------------------------------------------------')
-ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred1)).plot()
-plt.title("Confusion Matrix for Logistic Regression Classifier")
+head_train = logisticRegModel.predict(X_train_featureExtraction_TFIDF)
+print('The accuracy for logistic regression train:', accuracy_score(y_train, head_train) * 100)
+
+# conf_m = confusion_matrix(y_test, y_pred1)
+# report = classification_report(y_test, y_pred1)
+# print('report: ', report, sep='\n')
+# print('-----------------------------------------------------')
+# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred1)).plot()
+# plt.title("Confusion Matrix for Logistic Regression Classifier")
 
 svmModel = SVC(kernel='linear').fit(X_train_featureExtraction_TFIDF, y_train)
 y_pred2 = svmModel.predict(X_test_featureExtraction_TFIDF)
-
 print('The accuracy for Support Vector Machines (SVM):', accuracy_score(y_test, y_pred2) * 100)
 
-conf_m = confusion_matrix(y_test, y_pred2)
-report = classification_report(y_test, y_pred2)
-print('report: ', report, sep='\n')
-print('-----------------------------------------------------')
-ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred2)).plot()
-plt.title("Confusion Matrix for Support Vector Machines (SVM)")
+head_train = svmModel.predict(X_train_featureExtraction_TFIDF)
+print('The accuracy for Support Vector Machines (SVM) train:', accuracy_score(y_train, head_train) * 100)
+
+# conf_m = confusion_matrix(y_test, y_pred2)
+# report = classification_report(y_test, y_pred2)
+# print('report: ', report, sep='\n')
+# print('-----------------------------------------------------')
+# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred2)).plot()
+# plt.title("Confusion Matrix for Support Vector Machines (SVM)")
 
 naive_bayes_model_bow = MultinomialNB()
 naive_bayes_model_bow.fit(X_train_featureExtraction_BagOfword, y_train)
 y_pred_nb_bow = naive_bayes_model_bow.predict(X_test_featureExtraction_BagOfword)
 print('The accuracy for Naive Bayes (Bag of Words):', accuracy_score(y_test, y_pred_nb_bow) * 100)
 
-conf_m = confusion_matrix(y_test, y_pred_nb_bow)
-report = classification_report(y_test, y_pred_nb_bow)
-print('report: ', report, sep='\n')
-print('-----------------------------------------------------')
-ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred_nb_bow)).plot()
-plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
+head_train = naive_bayes_model_bow.predict(X_train_featureExtraction_BagOfword)
+print('The accuracy for Naive Bayes  train:', accuracy_score(y_train, head_train) * 100)
 
+# conf_m = confusion_matrix(y_test, y_pred_nb_bow)
+# report = classification_report(y_test, y_pred_nb_bow)
+# print('report: ', report, sep='\n')
+# print('-----------------------------------------------------')
+# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred_nb_bow)).plot()
+# plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
 
 # # the faild LSTM or RNN
-# from sklearn.preprocessing import MaxAbsScaler  
+# from sklearn.preprocessing import MaxAbsScaler
 # scaler = MinMaxScaler()
 # scaler.fit(X_train_featureExtraction_TFIDF)
 # scaled_train = scaler.transform(X_train_featureExtraction_TFIDF)
 # scaled_test = scaler.transform(X_test_featureExtraction_BagOfword)
 
 # from keras.preprocessing.sequence import TimeseriesGenerator
- 
+
 # n_input = 3
 # n_features = 1
 # generator = TimeseriesGenerator(scaled_train,
@@ -107,20 +117,24 @@ plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
 # model.summary()
 # model.fit(generator, epochs=5)
 
-# # Cross validation
-# models = [
-#     ('LogisticRegression', LogisticRegression()),
-#     ('SVC', svm.SVC(kernel='linear')),
-#     ('NaiveBayesClassifier', MultinomialNB()),
-# ]
+# Cross validation
 
-# kf = KFold(n_splits=5)
+print("Cross Validation Accuracy")
+models = [
+    ('LogisticRegression', LogisticRegression()),
+    ('SVC', SVC(kernel='linear')),
+    ('NaiveBayesClassifier', MultinomialNB()),
+]
 
-# for name, model in models:
-#     pipe = Pipeline([
-#         ('feature_extraction', TfidfVectorizer(min_df=1, stop_words='english', lowercase=True)),
-#         ('model', model)
-#     ])
-#     scores = cross_val_score(pipe, X, y, cv=kf)
-#     accuracy = np.mean(scores)
-#     print(f"{name} Accuracy: {accuracy*100:.2f}%")
+kf = KFold(n_splits=43)
+
+for name, model in models:
+    pipe = Pipeline([
+        ('feature_extraction', CountVectorizer(min_df=1, stop_words="english", lowercase=True)),
+        ('model', model)
+    ])
+    scores = cross_val_score(pipe, X, y, cv=kf)
+    accuracy = np.mean(scores)
+    print(f"{name} Accuracy: {accuracy*100:.2f}%")
+
+
