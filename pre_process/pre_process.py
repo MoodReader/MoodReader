@@ -20,12 +20,17 @@ data = pd.read_csv('../sentimentdataset.csv')
 data = remove_extra_spaces(data)
 data = convert_to_lowercase(data, 'Text')
 data = convert_to_lowercase(data, 'Sentiment (Label)')
+data = convert_to_lowercase(data, 'Topic')
 data['Text'] = data['Text'].apply(remove_punctuation)
 data['Text'] = data['Text'].apply(remove_slangs)
-data['Sentiment (Label)'] = data['Sentiment (Label)'].apply(Converting_To_Primitive)
 data['Text'] = data['Text'].apply(lemmatization_text)
+# data['Topic'] = data['Topic'].apply(remove_punctuation)
+# data['Topic'] = data['Topic'].apply(remove_slangs)
+# data['Topic'] = data['Topic'].apply(lemmatization_text)
+data['Sentiment (Label)'] = data['Sentiment (Label)'].apply(Converting_To_Primitive)
 
-X = data['Text'] + data["Topic"]
+ 
+X = data['Text'] + " " + data['Topic'] 
 y = data['Sentiment (Label)']
 
 featureExtraction_TFIDF = TfidfVectorizer(min_df=1, stop_words="english", lowercase=True)
@@ -48,12 +53,12 @@ print('The accuracy for Logistic Regression Classifier:', accuracy_score(y_test,
 head_train = logisticRegModel.predict(X_train_featureExtraction_TFIDF)
 print('The accuracy for logistic regression train:', accuracy_score(y_train, head_train) * 100)
 
-# conf_m = confusion_matrix(y_test, y_pred1)
-# report = classification_report(y_test, y_pred1)
-# print('report: ', report, sep='\n')
-# print('-----------------------------------------------------')
-# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred1)).plot()
-# plt.title("Confusion Matrix for Logistic Regression Classifier")
+conf_m = confusion_matrix(y_test, y_pred1)
+report = classification_report(y_test, y_pred1)
+print('report: ', report, sep='\n')
+print('-----------------------------------------------------')
+ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred1)).plot()
+plt.title("Confusion Matrix for Logistic Regression Classifier")
 
 svmModel = SVC(kernel='linear').fit(X_train_featureExtraction_TFIDF, y_train)
 y_pred2 = svmModel.predict(X_test_featureExtraction_TFIDF)
@@ -62,12 +67,12 @@ print('The accuracy for Support Vector Machines (SVM):', accuracy_score(y_test, 
 head_train = svmModel.predict(X_train_featureExtraction_TFIDF)
 print('The accuracy for Support Vector Machines (SVM) train:', accuracy_score(y_train, head_train) * 100)
 
-# conf_m = confusion_matrix(y_test, y_pred2)
-# report = classification_report(y_test, y_pred2)
-# print('report: ', report, sep='\n')
-# print('-----------------------------------------------------')
-# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred2)).plot()
-# plt.title("Confusion Matrix for Support Vector Machines (SVM)")
+conf_m = confusion_matrix(y_test, y_pred2)
+report = classification_report(y_test, y_pred2)
+print('report: ', report, sep='\n')
+print('-----------------------------------------------------')
+ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred2)).plot()
+plt.title("Confusion Matrix for Support Vector Machines (SVM)")
 
 naive_bayes_model_bow = MultinomialNB()
 naive_bayes_model_bow.fit(X_train_featureExtraction_BagOfword, y_train)
@@ -77,52 +82,19 @@ print('The accuracy for Naive Bayes (Bag of Words):', accuracy_score(y_test, y_p
 head_train = naive_bayes_model_bow.predict(X_train_featureExtraction_BagOfword)
 print('The accuracy for Naive Bayes  train:', accuracy_score(y_train, head_train) * 100)
 
-# conf_m = confusion_matrix(y_test, y_pred_nb_bow)
-# report = classification_report(y_test, y_pred_nb_bow)
-# print('report: ', report, sep='\n')
-# print('-----------------------------------------------------')
-# ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred_nb_bow)).plot()
-# plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
-
-# # the faild LSTM or RNN
-# from sklearn.preprocessing import MaxAbsScaler
-# scaler = MinMaxScaler()
-# scaler.fit(X_train_featureExtraction_TFIDF)
-# scaled_train = scaler.transform(X_train_featureExtraction_TFIDF)
-# scaled_test = scaler.transform(X_test_featureExtraction_BagOfword)
-
-# from keras.preprocessing.sequence import TimeseriesGenerator
-
-# n_input = 3
-# n_features = 1
-# generator = TimeseriesGenerator(scaled_train,
-#                                 scaled_train,
-#                                 length=n_input,
-#                                 batch_size=1)
-# X, y = generator[0]
-# print(f'Given the Array: \n{X.flatten()}')
-# print(f'Predict this y: \n {y}')
-# # We do the same thing, but now instead for 12 months
-# n_input = 12
-# generator = TimeseriesGenerator(scaled_train,
-#                                 scaled_train,
-#                                 length=n_input,
-#                                 batch_size=1)
-
-# model = Sequential()
-# model.add(LSTM(100, activation='relu',
-#                input_shape=(n_input, n_features)))
-# model.add(Dense(1))
-# model.compile(optimizer='adam', loss='mse')
-# model.summary()
-# model.fit(generator, epochs=5)
+conf_m = confusion_matrix(y_test, y_pred_nb_bow)
+report = classification_report(y_test, y_pred_nb_bow)
+print('report: ', report, sep='\n')
+print('-----------------------------------------------------')
+ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred_nb_bow)).plot()
+plt.title("Confusion Matrix for Naive Bayes (Bag of Words)")
 
 # Cross validation
 
 print("Cross Validation Accuracy")
 models = [
     ('LogisticRegression', LogisticRegression()),
-    ('SVC', SVC(kernel='linear')),
+    ('SVM', SVC(kernel='linear')),
     ('NaiveBayesClassifier', MultinomialNB()),
 ]
 

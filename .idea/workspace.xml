@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9046775b-dd8e-4f2b-8d2b-aa1048b151c4" name="Changes" comment="" />
+    <list default="true" id="9046775b-dd8e-4f2b-8d2b-aa1048b151c4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pre_process/pre_process.py" beforeDir="false" afterPath="$PROJECT_DIR$/pre_process/pre_process.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pre_process/remove_extra_spaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/pre_process/remove_extra_spaces.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,6 +36,7 @@
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;Python.GUI.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TKinter.executor&quot;: &quot;Run&quot;,
     &quot;Python.pre_process.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
@@ -57,5 +62,16 @@
       <updated>1714765179844</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
