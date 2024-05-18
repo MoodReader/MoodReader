@@ -13,7 +13,7 @@ def train_LogisticRegression_model(data_processed):
     featureExtraction_TFIDF = TfidfVectorizer(min_df=1, stop_words="english", lowercase=True)
 
     # Split the data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1007)
 
     # Transform the text data to TFIDF features
     X_train_featureExtraction_TFIDF = featureExtraction_TFIDF.fit_transform(X_train)

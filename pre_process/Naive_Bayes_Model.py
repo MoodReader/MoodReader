@@ -16,7 +16,7 @@ def train_naive_bayes_model(data_processed):
     featureExtraction_BagOfword = CountVectorizer(min_df=1, stop_words="english", lowercase=True)
 
     # Split the data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1007)
 
     # Transform the text data to bag-of-words features
     X_train_featureExtraction_BagOfword = featureExtraction_BagOfword.fit_transform(X_train)
