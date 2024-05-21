@@ -148,8 +148,8 @@ Window {
         }
         Rectangle{
             id: myCircleButton
-            color: "blue"
-            border.width: 1
+            color: submitButton.pressed ? "silver" : "white"
+            border.width: 3
             border.color: "black"
             width: 100
             height: 100
@@ -158,7 +158,16 @@ Window {
                 right: text_area.left
                 rightMargin: 40
             }
+            Text{
+                text: "submit"
+                font.pixelSize: 20
+            anchors{
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.verticalCenter
+            }
+            }
             MouseArea{
+                id: submitButton
                 anchors.fill: parent
                 onClicked:{
                     test.text = test_back_end.predict(buttons_container.activeButton, text_area.text)

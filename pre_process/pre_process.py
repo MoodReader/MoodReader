@@ -15,10 +15,7 @@ from remove_punctuation import remove_punctuation
 from remove_slangs import remove_slangs
 from lemmatization_text import lemmatization_text
 
-from imblearn.over_sampling import RandomOverSampler, SMOTE
-from imblearn.under_sampling import RandomUnderSampler, NearMiss
-from collections import Counter
-
+import seaborn as sns
 
 data = pd.read_csv('../sentimentdataset.csv')
 
@@ -89,6 +86,10 @@ print('The accuracy for Naive Bayes (Bag of Words):', accuracy_score(y_test, y_p
 head_train = naive_bayes_model_bow.predict(X_train_featureExtraction_BagOfword)
 print('The accuracy for Naive Bayes  train:', accuracy_score(y_train, head_train) * 100)
 print()
+
+data['size Text']= data['Text'].str.len()
+
+data.hist(column="size Text",by="Sentiment (Label)")
 
 # conf_m = confusion_matrix(y_test, y_pred_nb_bow)
 # report = classification_report(y_test, y_pred_nb_bow)
